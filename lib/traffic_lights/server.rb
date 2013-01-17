@@ -3,6 +3,7 @@ module TrafficLights
   class Server
     
     require 'net/ssh'
+    require 'wiringpi'
     
     attr_accessor :gpio, :name
     
@@ -11,11 +12,17 @@ module TrafficLights
       @gpio = config[:gpio] || []
       @name = config[:name] || ""
       @active_gpio = false
+      @io = WiringPi::GPIO.new
+      
+      @gpio.each do |pin|
+        puts "TURN %d OUTPUT" % pin
+        @io.mode(pin, OUTPUT)
+      end
     end
     
     def start
       Net::SSH.start(@config[:ssh][:host], @config[:ssh][:user], @config[:ssh][:options]) do |ssh|
-        cmd = "while true; do L=$(awk '{ print $1 }' /proc/loadavg); D=$(date +%H:%M:%S); echo -e \"$D\t$L\"; sleep 1; done"
+        cmd = "while true; do L=$(awk '{ print $1 }' /proc/loadavg); D=$(date +%H:%M:%S); echo -e \"$D\t$L\"; sleep 2; done"
         channel = ssh.open_channel do |chan|
           chan.exec(cmd) do |ch, success|
             raise "could not execute command" unless success
@@ -67,9 +74,13 @@ module TrafficLights
       if @gpio_active != pin
         (@gpio - [ pin ]).each do |inactive_pin|
           #TODO turn off this gpio pin
+          puts "TURN %d OFF" % inactive_pin
+          @io.write(inactive_pin, 0)
         end
         @gpio_active = pin
         # TODO turn on this gpio pin
+        puts "TURN %d ON" % pin
+        @io.write(pin, 1)
       end
     end
   end

@@ -55,6 +55,7 @@ module TrafficLights
     
     def test
       gpio = gpio_used
+      io = WiringPi::GPIO.new
       puts "Make sure you have connected GPIO pins " + gpio.join(", ")
       puts "Testing lights per config entry"
       @servers.each do |server|
@@ -63,8 +64,12 @@ module TrafficLights
           #TODO switch pin to output mode
           #TODO switch pin on
           puts "GPIO pin %d ON" % pin
+          io.write(pin, 1)
+          sleep 2
           #TODO switch pin off
           puts "GPIO pin %d OFF" % pin
+          io.write(pin, 0)
+          sleep 2
         end
       end
     end
