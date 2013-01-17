@@ -1,0 +1,20 @@
+My Server 1:
+  ssh:
+    host: my-domain.com
+    user: myusername
+    options:
+      password: secretpassword123
+      port: 26
+  cpu_cores: 2
+  limits: [80,90]
+  type: :trafficlights
+My Server 2:
+  ssh:
+    host: 127.0.0.1
+    user: localuser
+    options:
+      password: stillsecretpassword123
+      port: 26
+  cpu_cores: 1
+  limits: [50]
+  type: :redgreen  

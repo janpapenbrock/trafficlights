@@ -1,3 +1,6 @@
+.project
+config/config.yml
 *.class
 *.pyc
 *.pyo
+
