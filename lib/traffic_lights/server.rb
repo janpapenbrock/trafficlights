@@ -36,7 +36,16 @@ module TrafficLights
             end
           end
         end
-        channel.wait
+        begin
+          channel.wait
+        rescue SystemExit, Interrupt
+          puts "Turning off leds for %s" % @name
+          @gpio.each do |pin|
+            @io.write(pin, 0)
+          end
+          exit
+        end
+        
       end
     end
   

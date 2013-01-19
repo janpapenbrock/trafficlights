@@ -57,26 +57,40 @@ module TrafficLights
       gpio = gpio_used
       io = WiringPi::GPIO.new
       puts "Make sure you have connected GPIO pins " + gpio.join(", ")
+      puts "Switching all of these pins to output mode and turning them off."
+      gpio.each do |pin|
+          # switch pin to output mode and turn off
+          io.mode(pin, OUTPUT)
+          io.write(pin, 0)
+          sleep 1.0/4.0
+        end
       puts "Testing lights per config entry"
       @servers.each do |server|
         puts "Server: " + server.name
         server.gpio.each do |pin|
-          #TODO switch pin to output mode
-          #TODO switch pin on
           puts "GPIO pin %d ON" % pin
           io.write(pin, 1)
           sleep 2
-          #TODO switch pin off
+          
           puts "GPIO pin %d OFF" % pin
           io.write(pin, 0)
-          sleep 2
+          sleep 1.0/2.0
         end
       end
     end
     
     def start
       @servers.each do |server|
-        server.start
+        pid = Process.fork do 
+          server.start
+        end
+        puts pid
+      end
+      begin
+        Process.wait
+      rescue SystemExit, Interrupt
+        puts "Monitoring was interrupted. Shutting down."
+        exit
       end
     end
     
