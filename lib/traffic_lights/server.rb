@@ -25,7 +25,7 @@ module TrafficLights
         cmd = "while true; do L=$(awk '{ print $1 }' /proc/loadavg); D=$(date +%H:%M:%S); echo -e \"$D\t$L\"; sleep 2; done"
         channel = ssh.open_channel do |chan|
           chan.exec(cmd) do |ch, success|
-            raise "could not execute command" unless success
+            raise "Could not execute command on SSH channel." unless success
             
             ch.on_data do |c, data|
               handle_data data
