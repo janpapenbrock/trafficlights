@@ -1,3 +1,5 @@
+[![Code Climate](https://codeclimate.com/github/janpapenbrock/trafficlights.png)](https://codeclimate.com/github/janpapenbrock/trafficlights)
+
 Hey!
 
 trafficlights is a server load monitor built for use with a Raspberry Pi.
